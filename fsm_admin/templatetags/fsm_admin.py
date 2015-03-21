@@ -1,8 +1,13 @@
 from __future__ import unicode_literals
 
-from django import template
+from django import template, get_version
 from django.contrib.admin.templatetags.admin_modify import submit_row
 from django.conf import settings
+if get_version() >= '1.7':
+    from django.apps import apps
+    app_is_installed = apps.is_installed
+else:
+    app_is_installed = lambda app: app in settings.INSTALLED_APPS
 
 register = template.Library()
 
@@ -11,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 FSM_SUBMIT_BUTTON_TEMPLATE = 'fsm_admin/fsm_submit_button.html'
 FSM_SUBMIT_LINE_TEMPLATE = 'fsm_admin/fsm_submit_line.html'
-if 'grappelli' in settings.INSTALLED_APPS:
+if app_is_installed('grappelli'):
     FSM_SUBMIT_BUTTON_TEMPLATE = 'fsm_admin/fsm_submit_button_grappelli.html'
     FSM_SUBMIT_LINE_TEMPLATE = 'fsm_admin/fsm_submit_line_grappelli.html'
-if 'suit' in settings.INSTALLED_APPS:
+if app_is_installed('suit'):
     FSM_SUBMIT_BUTTON_TEMPLATE = 'fsm_admin/fsm_submit_button_suit.html'
     FSM_SUBMIT_LINE_TEMPLATE = 'fsm_admin/fsm_submit_line_suit.html'
 
